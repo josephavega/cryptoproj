@@ -1,66 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { TextInput, Button, Fieldset } from "react95";
 
 const CaesarCipher = () => {
-  const [input, setInput] = useState('');
+  const [message, setMessage] = useState("");
   const [key, setKey] = useState(1);
-  const [output, setOutput] = useState('');
+  const [result, setResult] = useState("");
 
-  const shiftChar = (char, shift) => {
-    const isUpper = char >= 'A' && char <= 'Z';
-    const isLower = char >= 'a' && char <= 'z';
-
-    if (isUpper) {
-      return String.fromCharCode(((char.charCodeAt(0) - 65 + shift + 26) % 26) + 65);
-    }
-    if (isLower) {
-      return String.fromCharCode(((char.charCodeAt(0) - 97 + shift + 26) % 26) + 97);
-    }
-    return char; // Non-alphabetic characters unchanged
+  const shiftChar = (char, k) => {
+    if (!/[a-z]/i.test(char)) return char;
+    const base = char === char.toUpperCase() ? 65 : 97;
+    return String.fromCharCode(((char.charCodeAt(0) - base + k + 26) % 26) + base);
   };
 
-  const caesarCipher = (text, shift) => {
-    return text
-      .split('')
-      .map(char => shiftChar(char, shift))
-      .join('');
+  const encrypt = () => {
+    const res = message.split("").map((ch) => shiftChar(ch, parseInt(key))).join("");
+    setResult(res);
   };
 
-  const handleEncrypt = () => {
-    setOutput(caesarCipher(input, parseInt(key)));
-  };
-
-  const handleDecrypt = () => {
-    setOutput(caesarCipher(input, -parseInt(key)));
+  const decrypt = () => {
+    const res = message.split("").map((ch) => shiftChar(ch, -parseInt(key))).join("");
+    setResult(res);
   };
 
   return (
-    <div style={{ padding: '1rem' }}>
-      <h2>Caesar Cipher</h2>
-      <textarea
+    <Fieldset label="Caesar Cipher">
+      <TextInput
         placeholder="Enter your message..."
-        value={input}
-        onChange={e => setInput(e.target.value)}
-        rows={4}
-        style={{ width: '100%', marginBottom: '0.5rem' }}
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        fullWidth
+        multiline
       />
-      <br />
-      <label>Key: </label>
-      <input
-        type="number"
+      <TextInput
+        placeholder="Key"
         value={key}
-        onChange={e => setKey(e.target.value)}
-        style={{ width: '60px', marginBottom: '0.5rem' }}
+        onChange={(e) => setKey(e.target.value)}
+        style={{ marginTop: "0.5rem" }}
       />
-      <br />
-      <button onClick={handleEncrypt}>Encrypt</button>
-      <button onClick={handleDecrypt} style={{ marginLeft: '1rem' }}>
-        Decrypt
-      </button>
-      <h3>Result:</h3>
-      <div style={{ whiteSpace: 'pre-wrap', padding: '0.5rem' }}>
-        {output}
+      <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
+        <Button onClick={encrypt}>Encrypt</Button>
+        <Button onClick={decrypt}>Decrypt</Button>
       </div>
-    </div>
+      <div style={{ marginTop: "0.5rem" }}>Result: {result}</div>
+    </Fieldset>
   );
 };
 
