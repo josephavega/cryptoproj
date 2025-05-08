@@ -1,58 +1,51 @@
-import React from "react";
-import { TextInput, Button, Fieldset } from "react95";
+import React, { useState } from 'react';
 
-const CaesarCipher = ({ caesarData, setCaesarData }) => {
-  const { message, key, result } = caesarData;
+const CaesarCipher = () => {
+  const [message, setMessage] = useState('');
+  const [key, setKey] = useState(3);
+  const [result, setResult] = useState('');
 
-  const shiftChar = (char, k) => {
-    if (!/[a-z]/i.test(char)) return char;
-    const base = char === char.toUpperCase() ? 65 : 97;
-    return String.fromCharCode(
-      ((char.charCodeAt(0) - base + k + 26) % 26) + base
-    );
+  const shiftChar = (char, shift) => {
+    const isUpper = char >= 'A' && char <= 'Z';
+    const isLower = char >= 'a' && char <= 'z';
+    if (!isUpper && !isLower) return char;
+
+    const base = isUpper ? 65 : 97;
+    return String.fromCharCode(((char.charCodeAt(0) - base + shift + 26) % 26) + base);
   };
 
-  const encrypt = () => {
-    const res = message
-      .split("")
-      .map((ch) => shiftChar(ch, parseInt(key)))
-      .join("");
-    setCaesarData({ message, key, result: res, mode: "encrypt" });
+  const handleEncrypt = () => {
+    const output = message.split('').map(ch => shiftChar(ch, parseInt(key))).join('');
+    setResult(output);
   };
 
-  const decrypt = () => {
-    const res = message
-      .split("")
-      .map((ch) => shiftChar(ch, -parseInt(key)))
-      .join("");
-    setCaesarData({ message, key, result: res, mode: "decrypt" });
+  const handleDecrypt = () => {
+    const output = message.split('').map(ch => shiftChar(ch, -parseInt(key))).join('');
+    setResult(output);
   };
 
   return (
-    <Fieldset label="Caesar Cipher">
-      <TextInput
-        placeholder="Enter your message..."
+    <div>
+      <textarea
+        rows={4}
+        placeholder="Enter message..."
         value={message}
-        onChange={(e) =>
-          setCaesarData({ ...caesarData, message: e.target.value })
-        }
-        fullWidth
-        multiline
+        onChange={(e) => setMessage(e.target.value)}
+        style={{ width: '100%' }}
       />
-      <TextInput
-        placeholder="Key"
+      <br />
+      <label>Key: </label>
+      <input
+        type="number"
         value={key}
-        onChange={(e) =>
-          setCaesarData({ ...caesarData, key: e.target.value })
-        }
-        style={{ marginTop: "0.5rem" }}
+        onChange={(e) => setKey(e.target.value)}
+        style={{ width: '60px' }}
       />
-      <div style={{ marginTop: "0.5rem", display: "flex", gap: "0.5rem" }}>
-        <Button onClick={encrypt}>Encrypt</Button>
-        <Button onClick={decrypt}>Decrypt</Button>
-      </div>
-      <div style={{ marginTop: "0.5rem" }}>Result: {result}</div>
-    </Fieldset>
+      <br />
+      <button onClick={handleEncrypt}>Encrypt</button>
+      <button onClick={handleDecrypt} style={{ marginLeft: '10px' }}>Decrypt</button>
+      <p><b>Output:</b> {result}</p>
+    </div>
   );
 };
 

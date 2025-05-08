@@ -1,157 +1,69 @@
-import React, { useState } from "react";
-import styled, { ThemeProvider, createGlobalStyle } from "styled-components";
-import {styleReset, AppBar, Toolbar, Button, Window, WindowHeader, WindowContent} from "react95";
-import original from "react95/dist/themes/original";
-import CaesarCipher from "./components/CaesarCipher";
-import CaesarExplanation from "./components/CaesarExplanation";
-import VigenereCipher from "./components/VigenereCipher";
+import React, { useState } from 'react';
+import { ThemeProvider, createGlobalStyle } from 'styled-components';
+import { styleReset } from 'react95';
+import original from 'react95/dist/themes/original';
+import CaesarCipherModule from './components/CaesarCipherModule';
+import VigenereCipherModule from './components/VigenereCipherModule';
+import A1Z26CipherModule from './components/A1Z26CipherModule';
+import AtbashCipherModule from './components/AtbashCipherModule';
+import PlayfairCipherModule from './components/PlayfairCipherModule';
+import AutokeyCipherModule from './components/AutokeyCipherModule';
+import PolybiusCipherModule from './components/PolybiusCipherModule';
+import Taskbar from './components/Taskbar';
+import DesktopIcon from './components/DesktopIcon';
+import folderIcon from './assets/folder.png';
+import { Window, WindowHeader, WindowContent, Button} from 'react95';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
   body {
     font-family: 'ms_sans_serif';
-    background: #008080;
-    height: 100vh;
+    background: teal;
     margin: 0;
+    height: 100vh;
     overflow: hidden;
   }
 `;
 
-const Desktop = styled.div`
-  width: 100vw;
-  height: 100vh;
-  background: #008080;
-  position: relative;
-  padding-bottom: 40px;
-  box-sizing: border-box;
-`;
-
-const StyledWindow = styled(Window)`
-  position: absolute;
-  top: ${({ $top }) => $top}px;
-  left: ${({ $left }) => $left}px;
-  width: 320px;
-`;
-
-const windowPositions = {
-  caesar: { top: 80, left: 80 },
-  caesarE: { top: 400, left: 80 },
-  vigenere: { top: 80, left: 440 },
-  method3: { top: 300, left: 80 },
-  method4: { top: 300, left: 440 },
-  method5: { top: 520, left: 260 }
-};
-
 function App() {
-  const [openWindows, setOpenWindows] = useState({
-    caesar: false,
-    caesarE: false,
-    vigenere: false,
-    method3: false,
-    method4: false,
-    method5: false
-  });
-
-  const [caesarData, setCaesarData] = useState({
-    message: "",
-    key: 1,
-    result: "",
-    mode: ""
-  });
-
-  const toggleWindow = (name) => {
-    setOpenWindows((prev) => ({ ...prev, [name]: !prev[name] }));
-  };
+  const [showFolderWindow, setShowFolderWindow] = useState(false);
 
   return (
     <ThemeProvider theme={original}>
       <GlobalStyles />
-      <Desktop>
-        {openWindows.caesar && (
-          <StyledWindow
-            $top={windowPositions.caesar.top}
-            $left={windowPositions.caesar.left}
-          >
-            <WindowHeader>
-              Caesar Cipher
-              <Button
-                size="sm"
-                onClick={() => {
-                  toggleWindow("caesar");
-                  setOpenWindows((prev) => ({ ...prev, caesarE: false }));
-                  setCaesarData({ message: "", key: 1, result: "", mode: "" });
-                }}
-                style={{ float: "right" }}
-              >
-                X
-              </Button>
+      <div style={{ height: 'calc(100vh - 40px)' }}>
+        {showFolderWindow && (
+          <div style={{ position: 'absolute', top: 70, left: 160, zIndex: 10 }}>
+            <Window style={{ width: 250 }}>
+              <WindowHeader>
+                <span>Cipher Folder</span>
+                <Button onClick={() => setShowFolderWindow(false)} style={{ float: 'right' }}>✕</Button>
+              </WindowHeader>
+              <WindowContent>
+                <CaesarCipherModule />
+                <VigenereCipherModule />
+                <A1Z26CipherModule />
+                <AtbashCipherModule />
+                <PlayfairCipherModule />
+                <AutokeyCipherModule />
+                <PolybiusCipherModule />
+              </WindowContent>
+            </Window>
+          </div>
+        )}
+      </div>
 
-            </WindowHeader>
-            <WindowContent>
-              <CaesarCipher
-                caesarData={caesarData}
-                setCaesarData={setCaesarData}
-              />
-            </WindowContent>
-          </StyledWindow>
-        )}
-        {openWindows.caesarE && (
-          <StyledWindow
-            $top={windowPositions.caesarE.top}
-            $left={windowPositions.caesarE.left}
-          >
-            <WindowHeader>Caesar Cipher Explanation</WindowHeader>
-            <WindowContent>
-              <CaesarExplanation caesarData={caesarData} />
-            </WindowContent>
-          </StyledWindow>
-        )}
-        {openWindows.vigenere && (
-          <StyledWindow
-            $top={windowPositions.vigenere.top}
-            $left={windowPositions.vigenere.left}
-          >
-            <WindowHeader>
-              Vigenère Cipher
-              <Button
-                size="sm"
-                onClick={() => toggleWindow("vigenere")}
-                style={{ float: "right" }}
-              >
-                X
-              </Button>
-            </WindowHeader>
-            <WindowContent>
-              <VigenereCipher />
-            </WindowContent>
-          </StyledWindow>
-        )}
-      </Desktop>
-      <AppBar position="absolute" style={{ bottom: 0, height: 40 }}>
-        <Toolbar style={{ padding: "1 8px", gap: "8px" }}>
-          <Button
-            size="sm"
-            onClick={() => {
-              toggleWindow("caesar");
-              toggleWindow("caesarE");
-            }}
-          >
-            Caesar
-          </Button>
-          <Button size="sm" onClick={() => toggleWindow("vigenere")}>
-            Vigenère
-          </Button>
-          <Button size="sm" onClick={() => toggleWindow("method3")}>
-            Method 3
-          </Button>
-          <Button size="sm" onClick={() => toggleWindow("method4")}>
-            Method 4
-          </Button>
-          <Button size="sm" onClick={() => toggleWindow("method5")}>
-            Method 5
-          </Button>
-        </Toolbar>
-      </AppBar>
+      <Taskbar>
+        {/* Optional taskbar buttons */}
+      </Taskbar>
+
+      <div style={{ padding: '16px', position: 'absolute', top: 40, left: 0 }}>
+        <DesktopIcon
+          icon={folderIcon}
+          label="Ciphers"
+          onClick={() => setShowFolderWindow(true)}
+        />
+      </div>
     </ThemeProvider>
   );
 }
