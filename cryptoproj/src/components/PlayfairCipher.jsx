@@ -4,10 +4,10 @@ import { Button } from 'react95';
 const PlayfairCipher = () => {
   const [plainText, setPlainText] = useState('');
   const [cipherText, setCipherText] = useState('');
-  const [key, setKey] = useState('CRYPTO');
+  const [key, setKey] = useState('crypto');
 
   const generateKeySquare = (key) => {
-    key = key.toUpperCase().replace(/[^A-Z]/g, '').replace(/J/g, 'I');
+    key = key.toLowerCase().replace(/[^a-z]/g, '').replace(/j/g, 'i');
     let seen = new Set();
     let square = [];
 
@@ -19,31 +19,75 @@ const PlayfairCipher = () => {
     }
 
     for (let i = 0; i < 26; i++) {
-      let char = String.fromCharCode(65 + i);
-      if (char === 'J') continue;
+      let char = String.fromCharCode(97 + i);
+      if (char === 'j') continue;
       if (!seen.has(char)) {
         seen.add(char);
         square.push(char);
       }
     }
 
-    let matrix = [];
-    for (let i = 0; i < 5; i++) {
-      matrix.push(square.slice(i * 5, i * 5 + 5));
-    }
+    return Array.from({ length: 5 }, (_, i) => square.slice(i * 5, i * 5 + 5));
+  };
 
-    return matrix;
+  const prepareText = (text) => {
+    text = text.toLowerCase().replace(/[^a-z]/g, '').replace(/j/g, 'i');
+    if (text.length % 2 !== 0) text += 'z'; // Playfair rule: pad if odd-length
+    return text;
+  };
+
+  const findPosition = (matrix, char) => {
+    for (let row = 0; row < 5; row++) {
+      for (let col = 0; col < 5; col++) {
+        if (matrix[row][col] === char) return [row, col];
+      }
+    }
+    return null;
   };
 
   const encrypt = () => {
     const matrix = generateKeySquare(key);
-    setCipherText(plainText.split('').map(char => char).join('')); // Placeholder logic
+    let text = prepareText(plainText);
+    let result = '';
+
+    for (let i = 0; i < text.length; i += 2) {
+      let [rowA, colA] = findPosition(matrix, text[i]);
+      let [rowB, colB] = findPosition(matrix, text[i + 1]);
+
+      if (rowA === rowB) {
+        result += matrix[rowA][(colA + 1) % 5] + matrix[rowB][(colB + 1) % 5];
+      } else if (colA === colB) {
+        result += matrix[(rowA + 1) % 5][colA] + matrix[(rowB + 1) % 5][colB];
+      } else {
+        result += matrix[rowA][colB] + matrix[rowB][colA];
+      }
+    }
+
+    setCipherText(result);
   };
 
   const decrypt = () => {
     const matrix = generateKeySquare(key);
-    setPlainText(cipherText.split('').map(char => char).join('')); // Placeholder logic
+    let text = cipherText;
+    let result = '';
+
+    for (let i = 0; i < text.length; i += 2) {
+      let [rowA, colA] = findPosition(matrix, text[i]);
+      let [rowB, colB] = findPosition(matrix, text[i + 1]);
+
+      if (rowA === rowB) {
+        result += matrix[rowA][(colA + 4) % 5] + matrix[rowB][(colB + 4) % 5];
+      } else if (colA === colB) {
+        result += matrix[(rowA + 4) % 5][colA] + matrix[(rowB + 4) % 5][colB];
+      } else {
+        result += matrix[rowA][colB] + matrix[rowB][colA];
+      }
+    }
+
+    result = result.replace(/z(?=[a-z]?$)/g, ''); // Remove padding 'z' if at the end
+    setPlainText(result);
   };
+  
 
   const clearPlainText = () => setPlainText('');
   const clearCipherText = () => setCipherText('');
