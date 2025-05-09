@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { AppBar, Toolbar } from 'react95';
 
@@ -10,6 +10,16 @@ const TaskbarWrapper = styled.div`
 `;
 
 const Taskbar = ({ children }) => {
+  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    }, 1000); // Updates every second
+
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
+
   return (
     <TaskbarWrapper>
       <AppBar>
@@ -18,7 +28,7 @@ const Taskbar = ({ children }) => {
             {children}
           </div>
           <span style={{ paddingRight: '8px' }}>
-            🕒 {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            🕒 {currentTime}
           </span>
         </Toolbar>
       </AppBar>
@@ -27,4 +37,6 @@ const Taskbar = ({ children }) => {
 };
 
 export default Taskbar;
+
+
 

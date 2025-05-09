@@ -12,7 +12,11 @@ import PolybiusCipherModule from './components/PolybiusCipherModule';
 import Taskbar from './components/Taskbar';
 import DesktopIcon from './components/DesktopIcon';
 import folderIcon from './assets/folder.png';
-import { Window, WindowHeader, WindowContent, Button} from 'react95';
+import infoIcon from './assets/info.png';
+import { Window, WindowHeader, WindowContent, Button } from 'react95';
+import CipherLauncher from './components/CipherLauncher';
+import InformationWindow from './components/InformationWindow';
+
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
@@ -27,6 +31,9 @@ const GlobalStyles = createGlobalStyle`
 
 function App() {
   const [showFolderWindow, setShowFolderWindow] = useState(false);
+  const [showCipherLauncher, setShowCipherLauncher] = useState(false);
+  const [showInfoWindow, setShowInfoWindow] = useState(false);
+  const [activeCipher, setActiveCipher] = useState('Caesar'); // Default cipher
 
   return (
     <ThemeProvider theme={original}>
@@ -58,11 +65,31 @@ function App() {
       </Taskbar>
 
       <div style={{ padding: '16px', position: 'absolute', top: 40, left: 0 }}>
+        {/* Cipher Launcher Icon */}
         <DesktopIcon
           icon={folderIcon}
           label="Ciphers"
-          onClick={() => setShowFolderWindow(true)}
+          onClick={() => setShowCipherLauncher(true)}
         />
+
+        {showCipherLauncher && (
+          <div style={{ position: 'absolute', top: 70, left: 160, zIndex: 10 }}>
+            <CipherLauncher cipherName="Ciphers" onClose={() => setShowCipherLauncher(false)} onCipherSelect={setActiveCipher} />
+          </div>
+        )}
+
+        {/* Information Icon */}
+        <DesktopIcon
+          icon={infoIcon}
+          label="Information"
+          onClick={() => setShowInfoWindow(true)}
+        />
+
+        {showInfoWindow && (
+          <div style={{ position: 'absolute', top: 120, left: 600, zIndex: 10 }}>
+            <InformationWindow cipherName={showCipherLauncher ? activeCipher : 'Caesar'} onClose={() => setShowInfoWindow(false)} />
+          </div>
+        )}
       </div>
     </ThemeProvider>
   );

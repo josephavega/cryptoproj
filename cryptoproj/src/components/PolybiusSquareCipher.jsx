@@ -1,31 +1,41 @@
 import React, { useState } from 'react';
 import { Button } from 'react95';
 
-const AtbashCipher = () => {
+const PolybiusSquareCipher = () => {
   const [plainText, setPlainText] = useState('');
   const [cipherText, setCipherText] = useState('');
 
-  const processEncrypt = () => {
-    const output = plainText.split('').map(char => {
-      const isUpper = char >= 'A' && char <= 'Z';
-      const isLower = char >= 'a' && char <= 'z';
+  const grid = [
+    ['A', 'B', 'C', 'D', 'E'],
+    ['F', 'G', 'H', 'I', 'K'],
+    ['L', 'M', 'N', 'O', 'P'],
+    ['Q', 'R', 'S', 'T', 'U'],
+    ['V', 'W', 'X', 'Y', 'Z'],
+  ];
 
-      if (isUpper) return String.fromCharCode(90 - (char.charCodeAt(0) - 65));
-      if (isLower) return String.fromCharCode(122 - (char.charCodeAt(0) - 97));
-      return char;
-    }).join('');
+  const charToCoord = {};
+  const coordToChar = {};
+
+  grid.forEach((row, i) => {
+    row.forEach((char, j) => {
+      const coord = `${i + 1}${j + 1}`;
+      charToCoord[char] = coord;
+      coordToChar[coord] = char;
+    });
+  });
+
+  const sanitize = (text) => text.toUpperCase().replace(/J/g, 'I').replace(/[^A-Z]/g, '');
+
+  const encrypt = () => {
+    const clean = sanitize(plainText);
+    const output = clean.split('').map(char => charToCoord[char] || '').join(' ');
     setCipherText(output);
   };
 
-  const processDecrypt = () => {
-    const output = cipherText.split('').map(char => {
-      const isUpper = char >= 'A' && char <= 'Z';
-      const isLower = char >= 'a' && char <= 'z';
-
-      if (isUpper) return String.fromCharCode(90 - (char.charCodeAt(0) - 65));
-      if (isLower) return String.fromCharCode(122 - (char.charCodeAt(0) - 97));
-      return char;
-    }).join('');
+  const decrypt = () => {
+    const clean = cipherText.replace(/[^0-9]/g, '');
+    const pairs = clean.match(/.{1,2}/g) || [];
+    const output = pairs.map(pair => coordToChar[pair] || '?').join('');
     setPlainText(output);
   };
 
@@ -49,8 +59,8 @@ const AtbashCipher = () => {
 
       {/* Encryption/Decryption Buttons */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-        <Button onClick={processEncrypt}>Encrypt ↓</Button>
-        <Button onClick={processDecrypt}>Decrypt ↑</Button>
+        <Button onClick={encrypt}>Encrypt ↓</Button>
+        <Button onClick={decrypt}>Decrypt ↑</Button>
       </div>
 
       {/* Ciphertext Output */}
@@ -69,4 +79,4 @@ const AtbashCipher = () => {
   );
 };
 
-export default AtbashCipher;
+export default PolybiusSquareCipher;

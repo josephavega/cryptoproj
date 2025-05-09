@@ -1,70 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Window, WindowHeader, WindowContent } from 'react95';
+import React, { useState } from 'react';
+import { Window, WindowHeader, WindowContent, Tab, Tabs, TabBody, Button } from 'react95';
 import styled from 'styled-components';
+
+import CaesarCipher from './CaesarCipher';
+import VigenereCipher from './VigenereCipher';
+import AtbashCipher from './AtbashCipher';
+import A1Z26Cipher from './A1Z26Cipher';
+import PlayfairCipher from './PlayfairCipher';
+import PolybiusSquareCipher from './PolybiusSquareCipher';
+import AutokeyCipher from './AutokeyCipher';
 
 const WindowWrapper = styled.div`
   position: absolute;
-  top: ${(props) => props.top}px;
-  left: ${(props) => props.left}px;
-  z-index: ${(props) => props.z};
+  top: 50px;
+  left: 50px;
+  width: 6000px;
+  height: 500px;
 `;
 
-const CipherLauncher = ({ cipherName, windowsContent }) => {
-  const [open, setOpen] = useState(false);
-  const [screenSize, setScreenSize] = useState({ width: 800, height: 600 });
+const FixedWindow = styled(Window)`
+  width: 600px;
+  height: 500px;
+`;
 
-  useEffect(() => {
-    const updateSize = () => setScreenSize({ width: window.innerWidth, height: window.innerHeight });
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
+const ciphers = [
+  { name: 'Caesar', component: <CaesarCipher /> },
+  { name: 'Vigenere', component: <VigenereCipher /> },
+  { name: 'Atbash', component: <AtbashCipher /> },
+  { name: 'A1Z26', component: <A1Z26Cipher /> },
+  { name: 'Playfair', component: <PlayfairCipher /> },
+  { name: 'Polybius Square', component: <PolybiusSquareCipher /> },
+  { name: 'Autokey', component: <AutokeyCipher /> }
+];
 
-  const quadrantPositions = [
-    { top: 230, left: 80 },
-    { top: 80, left: screenSize.width / 2 - 60 },
-    { top: screenSize.height / 2 + 50, left: 50 },
-    { top: screenSize.height / 2 + 40, left: screenSize.width / 2 + 20 },
-  ];
-
-  const [windows, setWindows] = useState(
-    windowsContent.map((w) => ({ ...w, open: false, z: 1 }))
-  );
-
-  const toggleWindows = () => {
-    setOpen(!open);
-    setWindows((prev) => prev.map((win) => ({ ...win, open: !open, z: 1 })));
-  };
-
-  const bringToFront = (index) => {
-    const maxZ = Math.max(...windows.map((w) => w.z));
-    setWindows((prev) =>
-      prev.map((win, i) => (i === index ? { ...win, z: maxZ + 1 } : win))
-    );
-  };
+const CipherLauncher = ({ onClose }) => {
+  const [activeTab, setActiveTab] = useState(ciphers[0].name);
 
   return (
-    <>
-      <Button onClick={toggleWindows}> {cipherName} Cipher </Button>
-      {windows.map((win, index) =>
-        win.open ? (
-          <WindowWrapper
-            key={index}
-            top={quadrantPositions[index].top}
-            left={quadrantPositions[index].left}
-            z={win.z}
-            onMouseDown={() => bringToFront(index)}
+    <WindowWrapper>
+      <FixedWindow>
+        <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Encryption - Decryption</span>
+          <Button
+            onClick={onClose}
+            style={{
+              fontWeight: 'bold',
+              fontSize: '16px',
+              padding: '2px 6px',
+              backgroundColor: '#c0c0c0',
+              border: '2px solid black',
+            }}
           >
-            <Window style={{ width: 300 }}>
-              <WindowHeader>
-                <span>{win.title}</span>
-              </WindowHeader>
-              <WindowContent>{win.component}</WindowContent>
-            </Window>
-          </WindowWrapper>
-        ) : null
-      )}
-    </>
+            ✕
+          </Button>
+
+        </WindowHeader>
+        <WindowContent>
+          <Tabs rows={2} value={activeTab} onChange={(value) => setActiveTab(value)}>
+            {ciphers.map((cipher) => (
+              <Tab key={cipher.name} value={cipher.name}>
+                {cipher.name}
+              </Tab>
+            ))}
+          </Tabs>
+          <TabBody style={{ height: 350, overflow: 'auto' }}>
+            {ciphers.map(
+              (cipher) => activeTab === cipher.name && <div key={cipher.name}>{cipher.component}</div>
+            )}
+          </TabBody>
+        </WindowContent>
+      </FixedWindow>
+    </WindowWrapper>
   );
 };
 

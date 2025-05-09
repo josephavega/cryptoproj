@@ -1,5 +1,5 @@
 import React from 'react';
-import PolybiusCipher from './PolybiusCipher';
+import PolybiusCipher from './PolybiusSquareCipher';
 import CipherLauncher from './CipherLauncher';
 
 const PolybiusCipherModule = () => {
