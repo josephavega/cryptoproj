@@ -11,16 +11,21 @@ import PolybiusSquareCipher from './PolybiusSquareCipher';
 import AutokeyCipher from './AutokeyCipher';
 
 const WindowWrapper = styled.div`
-  position: absolute;
-  top: 50px;
-  left: 50px;
-  width: 6000px;
-  height: 500px;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 60vw;
+  height: 65vh;
+  max-width: 550px;
+  max-height: 700px;
+  z-index: 1000;
 `;
 
 const FixedWindow = styled(Window)`
-  width: 600px;
-  height: 500px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const ciphers = [

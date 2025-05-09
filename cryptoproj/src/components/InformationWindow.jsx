@@ -17,22 +17,25 @@ import original from 'react95/dist/themes/original';
 
 const WindowWrapper = styled.div`
   position: fixed;
-  top: 200px;
-  left: 1000px;
-  width: 600px;
-  height: 600px;
+  top: 10%;
+  left: 50%;
+  width: 70vw;
+  height: 80vh;
+  max-width: 700px;
+  max-height: 700px;
   z-index: 1000;
 `;
 
 const FixedWindow = styled(Window)`
-  width: 700px;
-  height: 700px;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 `;
 
 const StyledTabs = styled(Tabs)`
   background: transparent;
   box-shadow: none;
-  border: none;
 `;
 
 const Section = styled.div`
@@ -100,9 +103,9 @@ const InformationWindow = ({ cipherName, onClose }) => {
                                 </Tab>
                             ))}
                         </StyledTabs>
-                        <TabBody>
-                            <ScrollView style={{ width: '610px', height: '475px', padding: '10px', backgroundColor: 'white' }}>
-
+                        <TabBody style={{ flex: 1, overflow: 'hidden', height: '60vh'}}>
+                        <ScrollView style={{ width: '100%', height: '100%', padding: '10px', backgroundColor: 'white' }}>
+                            
                                 {['about', 'encrypt', 'decrypt', 'history', 'solving'].map((key) => (
                                     <Section key={key}>
                                         <SectionTitle>{key.charAt(0).toUpperCase() + key.slice(1)}</SectionTitle>

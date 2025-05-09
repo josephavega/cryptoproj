@@ -38,7 +38,7 @@ function App() {
   return (
     <ThemeProvider theme={original}>
       <GlobalStyles />
-      <div style={{ height: 'calc(100vh - 40px)' }}>
+      <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
         {showFolderWindow && (
           <div style={{ position: 'absolute', top: 70, left: 160, zIndex: 10 }}>
             <Window style={{ width: 250 }}>
