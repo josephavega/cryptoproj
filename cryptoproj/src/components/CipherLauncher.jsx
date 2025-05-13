@@ -9,6 +9,7 @@ import A1Z26Cipher from './A1Z26Cipher';
 import PlayfairCipher from './PlayfairCipher';
 import PolybiusSquareCipher from './PolybiusSquareCipher';
 import AutokeyCipher from './AutokeyCipher';
+import ROT13Cipher from './ROT13Cipher';
 
 const WindowWrapper = styled.div`
   position: fixed;
@@ -35,7 +36,8 @@ const ciphers = [
   { name: 'A1Z26', component: <A1Z26Cipher /> },
   { name: 'Playfair', component: <PlayfairCipher /> },
   { name: 'Polybius Square', component: <PolybiusSquareCipher /> },
-  { name: 'Autokey', component: <AutokeyCipher /> }
+  { name: 'Autokey', component: <AutokeyCipher /> },
+  { name: 'ROT13', component: <ROT13Cipher /> }
 ];
 
 const CipherLauncher = ({ onClose }) => {

@@ -20,12 +20,27 @@ import InformationWindow from './components/InformationWindow';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
+  html { /* Added html selector */
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Ensure html also has overflow hidden */
+  }
   body {
     font-family: 'ms_sans_serif';
     background: teal;
     margin: 0;
-    height: 100vh;
-    overflow: hidden;
+    padding: 0; /* Explicitly add padding: 0 */
+    min-height: 100%; /* Use min-height as well or instead of height */
+    height: 100vh; /* Keep this */
+    overflow: hidden; /* Keep this */
+    display: flex; /* Added to see if it affects layout */
+    flex-direction: column; /* Added */
+  }
+  #root { /* Target the root div */
+    height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 `;
 
@@ -38,6 +53,8 @@ function App() {
   return (
     <ThemeProvider theme={original}>
       <GlobalStyles />
+      <Taskbar>
+      </Taskbar>
       <div style={{ width: '100vw', height: '100vh', position: 'relative' }}>
         {showFolderWindow && (
           <div style={{ position: 'absolute', top: 70, left: 160, zIndex: 10 }}>
@@ -60,12 +77,7 @@ function App() {
         )}
       </div>
 
-      <Taskbar>
-        {/* Optional taskbar buttons */}
-      </Taskbar>
-
       <div style={{ padding: '16px', position: 'absolute', top: 40, left: 0 }}>
-        {/* Cipher Launcher Icon */}
         <DesktopIcon
           icon={folderIcon}
           label="Ciphers"
@@ -78,7 +90,6 @@ function App() {
           </div>
         )}
 
-        {/* Information Icon */}
         <DesktopIcon
           icon={infoIcon}
           label="Information"

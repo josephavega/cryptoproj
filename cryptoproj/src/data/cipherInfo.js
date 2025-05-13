@@ -116,6 +116,22 @@ export const cipherInfo = {
       4. Append each recovered plaintext letter to the key as you go to continue decryption.`,
       history: `The Autokey cipher was developed in the 16th century as an enhancement to the Vigenère cipher. Giovan Battista Bellaso and Blaise de Vigenère both contributed to its development. It was considered a major improvement due to its use of plaintext as a key extension, limiting repetition.`,
       solving: `While more secure than the Vigenère cipher, the Autokey cipher is still vulnerable to known-plaintext attacks and clever frequency analysis. If a portion of the plaintext or keyword is known, the rest of the message can often be recovered. Cryptanalysts look for patterns in how the key is regenerated during decryption.`
-    }    
-  };
+    },
+
+  ROT13: {
+    title: 'ROT13 Cipher',
+    about: `ROT13 ("rotate by 13 places") is a simple letter substitution cipher that replaces a letter with the 13th letter after it in the alphabet. It's a special case of the Caesar cipher where the shift is 13. Applying ROT13 twice to a piece of text restores the original text; thus, the same algorithm can be used for encoding and decoding.
+    It is often used in online forums as a means of hiding spoilers, punchlines, puzzle solutions, and offensive materials from the casual glance, but it is not intended as a method of serious encryption.`,
+    encrypt: `1. For each letter in the plaintext, shift it 13 places forward in the alphabet.
+    2. If the shift goes past 'Z', wrap around to the beginning of the alphabet.
+    3. Non-alphabetic characters (numbers, symbols, spaces) are typically left unchanged.
+    Example: 'HELLO' becomes 'URYYB'.`,
+    decrypt: `1. For each letter in the ciphertext, shift it 13 places forward in the alphabet (which is the same as 13 places backward due to the 26-letter alphabet).
+    2. If the shift goes past 'Z', wrap around.
+    3. This will restore the original plaintext because applying ROT13 twice returns the original text.
+    Example: 'URYYB' becomes 'HELLO'.`,
+    history: `ROT13 originated in the net.jokes Usenet newsgroup in the early 1980s. It was used to obscure potentially offensive jokes, or to hide the answer to a riddle or a spoiler in a discussion. It is not a form of cryptography, as it offers no real security and is easily deciphered. Its use is primarily for mild obfuscation.`,
+    solving: `ROT13 is not 'solved' in the traditional cryptographic sense because there is no key to discover. The transformation is fixed. If you suspect a piece of text is ROT13 encoded, you simply apply the ROT13 transformation to it again to decode it. Recognizing that a text might be ROT13 often comes from context (e.g., an online forum where it's commonly used) or by observing that it's gibberish but seems to have the structure of real words.`
+  }
+};
   
