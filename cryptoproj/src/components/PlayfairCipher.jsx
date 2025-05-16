@@ -50,7 +50,7 @@ const prepareText = (text) => {
   }
 
   if (prepared.length % 2 !== 0) {
-    prepared += 'z';
+    prepared += 'q';
   }
 
   return prepared;
@@ -120,7 +120,7 @@ const decrypt = () => {
   }
 
   // Remove trailing 'z' if it was padding
-  if (cleaned.endsWith('z')) {
+  if (cleaned.endsWith('q')) {
     cleaned = cleaned.slice(0, -1);
   }
 
