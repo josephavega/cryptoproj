@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { AppBar, Toolbar, Button, Window, WindowContent, Anchor } from 'react95';
+import { AppBar, Toolbar, Button, Window, WindowHeader, WindowContent, Anchor } from 'react95';
 import startIcon from '../assets/start.png';
 import programmersIcon from '../assets/programmers.png';
 import sourcesIcon from '../assets/sources.png';
 import dontClickMeIcon from '../assets/dontclickme.png';
 import helpIcon from '../assets/help.png';
 import shutdownIcon from '../assets/shutdown.png';
+import creator1Img from '../assets/joseph_avatar.png'; 
+import creator2Img from '../assets/rile_avatar.png'; 
 
 const TaskbarWrapper = styled.div`
   height: 40px;
@@ -19,44 +21,47 @@ const TaskbarWrapper = styled.div`
   margin: 0;
 `;
 
+const ProgrammersModal = ({ onClose }) => (
+  <div style={{ position: 'absolute', bottom: 120, left: 250, zIndex: 9999 }}> {/* Higher z-index */}
+    <Window style={{ width: 400, height: 250 }}> 
+      <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Programmers</span>
+        <Button onClick={onClose} style={{ 
+              float: 'right',
+              fontWeight: 'bold',
+              fontSize: '16px',
+              padding: '2px 6px',
+              backgroundColor: '#c0c0c0',
+              border: '2px solid black',
+             }}>✕</Button>
+      </WindowHeader>
+      <WindowContent>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '24px' }}>
+          <div>
+            <img src={creator1Img} alt="Joseph Vega" style={{ width: 125, height: 125 }} />
+            <p style={{ textAlign: 'center' }}>Joseph Vega</p>
+          </div>
+          <div>
+            <img src={creator2Img} alt="Riley Nixon" style={{ width: 125, height: 125 }} />
+            <p style={{ textAlign: 'center' }}>Riley Nixon</p>
+          </div>
+        </div>
+      </WindowContent>
+    </Window>
+  </div>
+);
+
+
 const Taskbar = ({ children }) => {
-  const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
   const [isStartMenuOpen, setStartMenuOpen] = useState(false);
+  const [showProgrammersModal, setShowProgrammersModal] = useState(false);
   const startButtonRef = useRef(null);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    }, 1000);
-
-    const handleClickOutside = (event) => {
-      if (isStartMenuOpen && startButtonRef.current && !startButtonRef.current.contains(event.target)) {
-        let targetElement = event.target;
-        let clickedOnMenu = false;
-        while (targetElement) {
-          if (targetElement.style && targetElement.style.position === 'absolute' && targetElement.style.zIndex === '1001') {
-            clickedOnMenu = true;
-            break;
-          }
-          targetElement = targetElement.parentElement;
-        }
-        if (!clickedOnMenu) {
-          setStartMenuOpen(false);
-        }
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      clearInterval(interval);
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isStartMenuOpen]);
-
   const toggleStartMenu = () => setStartMenuOpen(!isStartMenuOpen);
-
   const handleMenuItemClick = (action) => {
-    console.log('Menu item clicked: ' + action);
+    if (action === 'Programmers') {
+      setShowProgrammersModal(true);
+    }
     if (action === 'Shut Down...') window.close();
     setStartMenuOpen(false);
   };
@@ -78,17 +83,7 @@ const Taskbar = ({ children }) => {
               Start
             </Button>
             {isStartMenuOpen && (
-              <Window
-                shadow={false}
-                style={{
-                  position: 'absolute',
-                  bottom: 'calc(100% + 2px)',
-                  left: 0,
-                  zIndex: 1001,
-                  width: '200px',
-                  maxHeight: '400px',
-                }}
-              >
+              <Window style={{ position: 'absolute', bottom: 'calc(100% + 2px)', left: 0, zIndex: 1001, width: '200px' }}>
                 <WindowContent style={{ padding: '2px' }}>
                   <ul style={{ listStyle: 'none', margin: 0, padding: '2px' }}>
                     <MenuItem icon={programmersIcon} label="Programmers" action="Programmers" />
@@ -103,11 +98,9 @@ const Taskbar = ({ children }) => {
             )}
             {children}
           </div>
-          <span style={{ paddingRight: '8px' }}>
-            🕒 {currentTime}
-          </span>
         </Toolbar>
       </AppBar>
+      {showProgrammersModal && <ProgrammersModal onClose={() => setShowProgrammersModal(false)} />}
     </TaskbarWrapper>
   );
 };
