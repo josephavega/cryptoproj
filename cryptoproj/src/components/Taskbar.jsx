@@ -7,8 +7,8 @@ import sourcesIcon from '../assets/sources.png';
 import dontClickMeIcon from '../assets/dontclickme.png';
 import helpIcon from '../assets/help.png';
 import shutdownIcon from '../assets/shutdown.png';
-import creator1Img from '../assets/joseph_avatar.png'; 
-import creator2Img from '../assets/rile_avatar.png'; 
+import creator1Img from '../assets/joseph_avatar.png';
+import creator2Img from '../assets/rile_avatar.png';
 
 const TaskbarWrapper = styled.div`
   height: 40px;
@@ -23,17 +23,17 @@ const TaskbarWrapper = styled.div`
 
 const ProgrammersModal = ({ onClose }) => (
   <div style={{ position: 'absolute', bottom: 120, left: 250, zIndex: 9999 }}> {/* Higher z-index */}
-    <Window style={{ width: 400, height: 250 }}> 
+    <Window style={{ width: 400, height: 250 }}>
       <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <span>Programmers</span>
-        <Button onClick={onClose} style={{ 
-              float: 'right',
-              fontWeight: 'bold',
-              fontSize: '16px',
-              padding: '2px 6px',
-              backgroundColor: '#c0c0c0',
-              border: '2px solid black',
-             }}>✕</Button>
+        <Button onClick={onClose} style={{
+          float: 'right',
+          fontWeight: 'bold',
+          fontSize: '16px',
+          padding: '2px 6px',
+          backgroundColor: '#c0c0c0',
+          border: '2px solid black',
+        }}>✕</Button>
       </WindowHeader>
       <WindowContent>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '24px' }}>
@@ -51,20 +51,52 @@ const ProgrammersModal = ({ onClose }) => (
   </div>
 );
 
+const SourcesModal = ({ onClose }) => (
+  <div style={{ position: 'fixed', top: '5%', right: '5%', zIndex: 9999 }}>
+    <Window style={{ width: 400, height: 250 }}>
+      <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Sources & Attributions</span>
+        <Button onClick={onClose} style={{
+          float: 'right',
+          fontWeight: 'bold',
+          fontSize: '16px',
+          padding: '2px 6px',
+          backgroundColor: '#c0c0c0',
+          border: '2px solid black',
+        }}>✕</Button>
+      </WindowHeader>
+      <WindowContent>
+        <div style={{ padding: '8px', lineHeight: '1.5' }}>
+          <p><span style={{ fontWeight: 'bold' }}>Component Library:</span> <Anchor href="https://github.com/react95-io/React95" target="_blank">React95</Anchor></p>
+          <p><span style={{ fontWeight: 'bold' }}>Avatars Created Using:</span> <Anchor href="https://www.avatarsinpixels.com/" target="_blank">Avatars in Pixels</Anchor></p>
+          <p><span style={{ fontWeight: 'bold' }}>Further Reading:</span> <em>An Introduction to Mathematical Cryptography</em> by Jeffrey Hoffstein, Jill Pipher, & J.H. Silverman</p>
+        </div>
+      </WindowContent>
+    </Window>
+  </div>
+);
+
+
 
 const Taskbar = ({ children }) => {
   const [isStartMenuOpen, setStartMenuOpen] = useState(false);
   const [showProgrammersModal, setShowProgrammersModal] = useState(false);
   const startButtonRef = useRef(null);
-
   const toggleStartMenu = () => setStartMenuOpen(!isStartMenuOpen);
-  const handleMenuItemClick = (action) => {
-    if (action === 'Programmers') {
-      setShowProgrammersModal(true);
-    }
-    if (action === 'Shut Down...') window.close();
-    setStartMenuOpen(false);
-  };
+  const [showSourcesModal, setShowSourcesModal] = useState(false);
+
+const handleMenuItemClick = (action) => {
+  if (action === 'Programmers') {
+    setShowProgrammersModal(true);
+  } else if (action === 'Attribution') {
+    setShowSourcesModal(true); 
+  } else if (action === 'Shut Down...') {
+    window.close();
+  }
+  setStartMenuOpen(false);
+};
+
+
 
   const MenuItem = ({ icon, label, action }) => (
     <li style={{ padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -87,7 +119,7 @@ const Taskbar = ({ children }) => {
                 <WindowContent style={{ padding: '2px' }}>
                   <ul style={{ listStyle: 'none', margin: 0, padding: '2px' }}>
                     <MenuItem icon={programmersIcon} label="Programmers" action="Programmers" />
-                    <MenuItem icon={sourcesIcon} label="Sources" action="sources" />
+                    <MenuItem icon={sourcesIcon} label="Attribution" action="Attribution" />
                     <MenuItem icon={dontClickMeIcon} label="Don't Click Me!" action="Don't click me" />
                     <MenuItem icon={helpIcon} label="Help" action="Help" />
                     <div style={{ height: '1px', background: 'grey', margin: '4px 0' }} />
@@ -100,6 +132,7 @@ const Taskbar = ({ children }) => {
           </div>
         </Toolbar>
       </AppBar>
+      {showSourcesModal && <SourcesModal onClose={() => setShowSourcesModal(false)} />}
       {showProgrammersModal && <ProgrammersModal onClose={() => setShowProgrammersModal(false)} />}
     </TaskbarWrapper>
   );
