@@ -113,6 +113,11 @@ const Taskbar = ({ children }) => {
   const [progress, setProgress] = useState(0);
   const [showProgrammersModal, setShowProgrammersModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [notesText, setNotesText] = useState(() => {
+    // Load from localStorage if available
+    return localStorage.getItem('notepadText') || '';
+  });
   const startButtonRef = useRef(null);
 
   useEffect(() => {
@@ -229,8 +234,33 @@ const Taskbar = ({ children }) => {
             )}
             {children}
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Button onClick={() => setShowNotes(true)} style={{ fontWeight: 'bold', minWidth: 80 }}>Notes</Button>
+          </div>
         </Toolbar>
       </AppBar>
+      {showNotes && (
+        <div style={{ position: 'fixed', bottom: 60, right: 24, zIndex: 9999 }}>
+          <Window style={{ width: 320, minHeight: 220 }}>
+            <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Notepad</span>
+              <Button onClick={() => setShowNotes(false)} style={{ float: 'right', fontWeight: 'bold', fontSize: '16px', padding: '2px 6px', backgroundColor: '#c0c0c0', border: '2px solid black' }}>✕</Button>
+            </WindowHeader>
+            <WindowContent>
+              <textarea
+                style={{ width: '100%', height: '140px', resize: 'vertical', fontSize: 14, background: 'white', border: '1px solid #888', padding: 6 }}
+                placeholder="Type your notes here..."
+                spellCheck={false}
+                value={notesText}
+                onChange={e => {
+                  setNotesText(e.target.value);
+                  localStorage.setItem('notepadText', e.target.value);
+                }}
+              />
+            </WindowContent>
+          </Window>
+        </div>
+      )}
       {showSourcesModal && <SourcesModal onClose={() => setShowSourcesModal(false)} />}
       {showProgrammersModal && <ProgrammersModal onClose={() => setShowProgrammersModal(false)} />}
       {showHelpModal && <HelpModal onClose={() => setShowHelpModal(false)} />}
