@@ -77,7 +77,25 @@ const SourcesModal = ({ onClose }) => (
   </div>
 );
 
-
+const HelpModal = ({ onClose }) => (
+  <div style={{ position: 'fixed', top: '20%', left: '30%', zIndex: 2000 }}>
+    <Window style={{ width: 440 }}>
+      <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <span>Help</span>
+        <Button onClick={onClose} style={{ float: 'right', fontWeight: 'bold', fontSize: '16px', padding: '2px 6px', backgroundColor: '#c0c0c0', border: '2px solid black' }}>✕</Button>
+      </WindowHeader>
+      <WindowContent>
+        <div style={{ padding: '8px', lineHeight: '1.5' }}>
+          <b style={{ fontWeight: 'bold'}}> Welcome to our oldschool cipher explainer! </b>
+          <div style={{ height: 12 }} />
+          <p>Check out the the desktop icons to explore classic ciphers and learn about how they work!</p>
+          <div style={{ height: 12 }} />
+          <p>Explore the Start button for some extra resources!<span style={{ display: 'inline-block', marginLeft: 32 }}>:3</span></p>
+        </div>
+      </WindowContent>
+    </Window>
+  </div>
+);
 
 const CenteredWindowWrapper = styled.div`
   position: fixed;
@@ -94,6 +112,7 @@ const Taskbar = ({ children }) => {
   const [showStealingWindow, setShowStealingWindow] = useState(false);
   const [progress, setProgress] = useState(0);
   const [showProgrammersModal, setShowProgrammersModal] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(false);
   const startButtonRef = useRef(null);
 
   useEffect(() => {
@@ -140,20 +159,20 @@ const Taskbar = ({ children }) => {
   const toggleStartMenu = () => setStartMenuOpen(!isStartMenuOpen);
   const [showSourcesModal, setShowSourcesModal] = useState(false);
 
-const handleMenuItemClick = (action) => {
-  if (action === 'Programmers') {
-    setShowProgrammersModal(true);
-  } else if (action === 'Attribution') {
-    setShowSourcesModal(true); 
-  } else if (action === "Don't click me") {
+  const handleMenuItemClick = (action) => {
+    if (action === 'Programmers') {
+      setShowProgrammersModal(true);
+    } else if (action === 'Attribution') {
+      setShowSourcesModal(true); 
+    } else if (action === "Don't click me") {
       setShowStealingWindow(true);
-  } else if (action === 'Shut Down...') {
-    window.close();
-  }
-  setStartMenuOpen(false);
-};
-
-
+    } else if (action === 'Help') {
+      setShowHelpModal(true);
+    } else if (action === 'Shut Down...') {
+      window.close();
+    }
+    setStartMenuOpen(false);
+  };
 
   const MenuItem = ({ icon, label, action }) => (
     <li style={{ padding: '4px 8px', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
@@ -168,7 +187,7 @@ const handleMenuItemClick = (action) => {
         <CenteredWindowWrapper style={{ zIndex: 99999 }}>
           <Window style={{ width: 480, zIndex: 99999 }}>
             <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>Warning.exe</span>
+              <span>bob_and_alice_cant_save_you_now_muahahah.exe</span>
               <Button size="sm" square onClick={() => setShowStealingWindow(false)} style={{ marginLeft: 4 }}>
                 <span style={{ fontWeight: 'bold', fontSize: 16, lineHeight: 1 }}>×</span>
               </Button>
@@ -214,6 +233,7 @@ const handleMenuItemClick = (action) => {
       </AppBar>
       {showSourcesModal && <SourcesModal onClose={() => setShowSourcesModal(false)} />}
       {showProgrammersModal && <ProgrammersModal onClose={() => setShowProgrammersModal(false)} />}
+      {showHelpModal && <HelpModal onClose={() => setShowHelpModal(false)} />}
     </TaskbarWrapper>
   );
 };
