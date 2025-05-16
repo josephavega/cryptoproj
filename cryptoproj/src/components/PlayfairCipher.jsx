@@ -30,11 +30,32 @@ const PlayfairCipher = () => {
     return Array.from({ length: 5 }, (_, i) => square.slice(i * 5, i * 5 + 5));
   };
 
-  const prepareText = (text) => {
-    text = text.toLowerCase().replace(/[^a-z]/g, '').replace(/j/g, 'i');
-    if (text.length % 2 !== 0) text += 'z'; // Playfair rule: pad if odd-length
-    return text;
-  };
+const prepareText = (text) => {
+  text = text.toLowerCase().replace(/[^a-z]/g, '').replace(/j/g, 'i');
+  let prepared = '';
+  
+  for (let i = 0; i < text.length; i++) {
+    let char1 = text[i];
+    let char2 = text[i + 1];
+
+    if (char1 === char2) {
+      prepared += char1 + 'x';
+    } else {
+      prepared += char1;
+      if (char2) {
+        prepared += char2;
+        i++; // Skip next character since it's already used
+      }
+    }
+  }
+
+  if (prepared.length % 2 !== 0) {
+    prepared += 'z';
+  }
+
+  return prepared;
+};
+
 
   const findPosition = (matrix, char) => {
     for (let row = 0; row < 5; row++) {
@@ -66,27 +87,46 @@ const PlayfairCipher = () => {
     setCipherText(result);
   };
 
-  const decrypt = () => {
-    const matrix = generateKeySquare(key);
-    let text = cipherText;
-    let result = '';
+const decrypt = () => {
+  const matrix = generateKeySquare(key);
+  let text = cipherText;
+  let result = '';
 
-    for (let i = 0; i < text.length; i += 2) {
-      let [rowA, colA] = findPosition(matrix, text[i]);
-      let [rowB, colB] = findPosition(matrix, text[i + 1]);
+  for (let i = 0; i < text.length; i += 2) {
+    let [rowA, colA] = findPosition(matrix, text[i]);
+    let [rowB, colB] = findPosition(matrix, text[i + 1]);
 
-      if (rowA === rowB) {
-        result += matrix[rowA][(colA + 4) % 5] + matrix[rowB][(colB + 4) % 5];
-      } else if (colA === colB) {
-        result += matrix[(rowA + 4) % 5][colA] + matrix[(rowB + 4) % 5][colB];
-      } else {
-        result += matrix[rowA][colB] + matrix[rowB][colA];
-      }
+    if (rowA === rowB) {
+      result += matrix[rowA][(colA + 4) % 5] + matrix[rowB][(colB + 4) % 5];
+    } else if (colA === colB) {
+      result += matrix[(rowA + 4) % 5][colA] + matrix[(rowB + 4) % 5][colB];
+    } else {
+      result += matrix[rowA][colB] + matrix[rowB][colA];
     }
+  }
 
-    result = result.replace(/z(?=[a-z]?$)/g, ''); // Remove padding 'z' if at the end
-    setPlainText(result);
-  };
+  // Remove filler 'x' between duplicate letters (e.g., "mxm" -> "mm")
+  let cleaned = '';
+  for (let i = 0; i < result.length; i++) {
+    if (
+      i > 0 &&
+      i < result.length - 1 &&
+      result[i] === 'x' &&
+      result[i - 1] === result[i + 1]
+    ) {
+      continue; // skip the 'x'
+    }
+    cleaned += result[i];
+  }
+
+  // Remove trailing 'z' if it was padding
+  if (cleaned.endsWith('z')) {
+    cleaned = cleaned.slice(0, -1);
+  }
+
+  setPlainText(cleaned);
+};
+
   
 
   const clearPlainText = () => setPlainText('');

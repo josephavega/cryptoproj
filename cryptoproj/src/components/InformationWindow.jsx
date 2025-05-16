@@ -21,8 +21,8 @@ const WindowWrapper = styled.div`
   left: 50%;
   width: 70vw;
   height: 80vh;
-  max-width: 700px;
-  max-height: 700px;
+  max-width: 650px;
+  max-height: 650px;
   z-index: 1000;
 `;
 

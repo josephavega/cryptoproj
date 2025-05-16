@@ -70,7 +70,7 @@ const SourcesModal = ({ onClose }) => (
         <div style={{ padding: '8px', lineHeight: '1.5' }}>
           <p><span style={{ fontWeight: 'bold' }}>Component Library:</span> <Anchor href="https://github.com/react95-io/React95" target="_blank">React95</Anchor></p>
           <p><span style={{ fontWeight: 'bold' }}>Avatars Created Using:</span> <Anchor href="https://www.avatarsinpixels.com/" target="_blank">Avatars in Pixels</Anchor></p>
-          <p><span style={{ fontWeight: 'bold' }}>Further Reading:</span> <em>An Introduction to Mathematical Cryptography</em> by Jeffrey Hoffstein, Jill Pipher, & J.H. Silverman</p>
+          <p><span style={{ fontWeight: 'bold' }}>Further Reading: </span><span style= {{fontStyle: 'italic' }}>An Introduction to Mathematical Cryptography</span>  by Jeffrey Hoffstein, Jill Pipher, & J.H. Silverman</p>
         </div>
       </WindowContent>
     </Window>
