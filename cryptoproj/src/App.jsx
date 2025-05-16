@@ -13,24 +13,24 @@ import InformationWindow from './components/InformationWindow';
 
 const GlobalStyles = createGlobalStyle`
   ${styleReset}
-  html { /* Added html selector */
+  html { 
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Ensure html also has overflow hidden */
+    overflow: hidden; 
   }
   body {
     font-family: 'ms_sans_serif';
     background: teal;
     margin: 0;
-    padding: 0; /* Explicitly add padding: 0 */
-    min-height: 100%; /* Use min-height as well or instead of height */
-    height: 100vh; /* Keep this */
-    overflow: hidden; /* Keep this */
-    display: flex; /* Added to see if it affects layout */
-    flex-direction: column; /* Added */
+    padding: 0; 
+    min-height: 100%; 
+    height: 100vh; 
+    overflow: hidden; 
+    display: flex; 
+    flex-direction: column; 
   }
-  #root { /* Target the root div */
+  #root { 
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -78,7 +78,7 @@ function App() {
         />
 
         {showCipherLauncher && (
-          <div style={{ position: 'absolute', top: 70, left: 160, zIndex: 10 }}>
+          <div style={{ position: 'absolute', top: 70, left: '2vw', zIndex: 10 }}>
             <CipherLauncher cipherName="Ciphers" onClose={() => setShowCipherLauncher(false)} onCipherSelect={setActiveCipher} />
           </div>
         )}
@@ -90,7 +90,7 @@ function App() {
         />
 
         {showInfoWindow && (
-          <div style={{ position: 'absolute', top: 120, left: 600, zIndex: 10 }}>
+          <div style={{ position: 'absolute', top: 120, right: '2vw', zIndex: 10 }}>
             <InformationWindow cipherName={showCipherLauncher ? activeCipher : 'Caesar'} onClose={() => setShowInfoWindow(false)} />
           </div>
         )}

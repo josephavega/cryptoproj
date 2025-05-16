@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { AppBar, Toolbar, Button, Window, WindowHeader, WindowContent, Anchor } from 'react95';
+import { AppBar, Toolbar, Button, Window, WindowContent, Anchor, ProgressBar, WindowHeader } from 'react95';
 import startIcon from '../assets/start.png';
 import programmersIcon from '../assets/programmers.png';
 import sourcesIcon from '../assets/sources.png';
 import dontClickMeIcon from '../assets/dontclickme.png';
 import helpIcon from '../assets/help.png';
 import shutdownIcon from '../assets/shutdown.png';
+import mrpIcon from '../assets/mrp.png';
 import creator1Img from '../assets/joseph_avatar.png';
 import creator2Img from '../assets/rile_avatar.png';
 
@@ -78,10 +79,64 @@ const SourcesModal = ({ onClose }) => (
 
 
 
+const CenteredWindowWrapper = styled.div`
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  background: rgba(0,0,0,0.15);
+`;
+
 const Taskbar = ({ children }) => {
   const [isStartMenuOpen, setStartMenuOpen] = useState(false);
+  const [showStealingWindow, setShowStealingWindow] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [showProgrammersModal, setShowProgrammersModal] = useState(false);
   const startButtonRef = useRef(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+    }, 1000);
+
+    const handleClickOutside = (event) => {
+      if (isStartMenuOpen && startButtonRef.current && !startButtonRef.current.contains(event.target)) {
+        let targetElement = event.target;
+        let clickedOnMenu = false;
+        while (targetElement) {
+          if (targetElement.style && targetElement.style.position === 'absolute' && targetElement.style.zIndex === '1001') {
+            clickedOnMenu = true;
+            break;
+          }
+          targetElement = targetElement.parentElement;
+        }
+        if (!clickedOnMenu) {
+          setStartMenuOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isStartMenuOpen]);
+
+  useEffect(() => {
+    if (!showStealingWindow) {
+      setProgress(0);
+      return;
+    }
+    setProgress(0);
+    const interval2 = setInterval(() => {
+      setProgress((prev) => (prev < 100 ? prev + 2 : 100));
+    }, 120); // doubled interval for slower progress
+    return () => clearInterval(interval2);
+  }, [showStealingWindow]);
+
   const toggleStartMenu = () => setStartMenuOpen(!isStartMenuOpen);
   const [showSourcesModal, setShowSourcesModal] = useState(false);
 
@@ -90,6 +145,8 @@ const handleMenuItemClick = (action) => {
     setShowProgrammersModal(true);
   } else if (action === 'Attribution') {
     setShowSourcesModal(true); 
+  } else if (action === "Don't click me") {
+      setShowStealingWindow(true);
   } else if (action === 'Shut Down...') {
     window.close();
   }
@@ -107,6 +164,29 @@ const handleMenuItemClick = (action) => {
 
   return (
     <TaskbarWrapper>
+      {showStealingWindow && (
+        <CenteredWindowWrapper style={{ zIndex: 99999 }}>
+          <Window style={{ width: 480, zIndex: 99999 }}>
+            <WindowHeader style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Warning.exe</span>
+              <Button size="sm" square onClick={() => setShowStealingWindow(false)} style={{ marginLeft: 4 }}>
+                <span style={{ fontWeight: 'bold', fontSize: 16, lineHeight: 1 }}>×</span>
+              </Button>
+            </WindowHeader>
+            <WindowContent>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 2, padding: 0 }}>
+                <img src={mrpIcon} alt="mr p." style={{ width: 72, height: 'auto', marginBottom: 2 }} />
+                <div style={{ fontWeight: 'bold', textAlign: 'center', marginBottom: 2, fontSize: 15 }}>
+                  mr p. is stealing your data
+                </div>
+              </div>
+              <div style={{ width: '99%', margin: '0 auto' }}>
+                <ProgressBar value={progress} />
+              </div>
+            </WindowContent>
+          </Window>
+        </CenteredWindowWrapper>
+      )}
       <AppBar style={{ position: 'relative', width: '100%' }}>
         <Toolbar style={{ justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }} ref={startButtonRef}>
